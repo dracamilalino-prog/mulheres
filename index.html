@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Rastreio Clínico de Saúde Mental para Mulheres</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Autoavaliação multidomínio para identificação de sinais em saúde mental feminina.">
+  <style>
+    html, body {
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: #faf9fb;
+      margin: 0;
+      padding: 0;
+      color: #232323;
+    }
+    header {
+      background: #ae91db;
+      color: #fff;
+      padding: 1.3rem 0 1rem 0;
+      text-align: center;
+      box-shadow: 0 2px 6px #0001;
+    }
+    main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 1.2em;
+    }
+    h1, h2 {
+      color: #6e33ae;
+      font-weight: 600;
+      margin-top: 1.2em;
+      margin-bottom: 0.6em;
+      letter-spacing: 0.01em;
+    }
+    h2 {
+      background: #efe7fa;
+      padding: 0.4em 0.8em;
+      border-radius: 0.5em;
+      font-size: 1.1em;
+      margin-bottom: 1em;
+      margin-top: 2em;
+      color: #825cc2;
+    }
+    form {
+      background: #fff;
+      border-radius: 1em;
+      box-shadow: 0 2px 16px #6e33ae10;
+      padding: 2em 1em;
+      margin: 1.5em 0 2.5em 0;
+    }
+    .campo {
+      margin-bottom: 1.3em;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 0.5em;
+      font-weight: 500;
+      font-size: 1em;
+    }
+    input, select {
+      padding: 0.5em 0.8em;
+      border-radius: 0.3em;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background: #fcf9ff;
+    }
+    .dominio-group {
+      background: #f8f2fb;
+      border-left: 5px solid #b79bd7;
+      border-radius: 0.8em;
+      margin: 2em 0 1.5em 0;
+      box-shadow: 0 1px 8px #a994c814;
+      padding: 1.2em 1em 0.4em 1em;
+    }
+    .pergunta {
+      margin: 1.1em 0 0.5em 0;
+      padding: 0.5em 0.6em;
+      border-radius: 0.5em;
+      font-size: 1.02em;
+      background: #fff;
+      box-shadow: 0 1px 4px #e9ddfa1a;
+      font-weight: 500;
+    }
+    .opcoes {
+      margin: 0.4em 0 0.6em 1em;
+      display: flex;
+      gap: 1.8em;
+      flex-wrap: wrap;
+    }
+    .opcao {
+      display: flex;
+      align-items: center;
+      font-size: 0.98em;
+      margin-bottom: 0.3em;
+    }
+    .opcao input[type="radio"] {
+      accent-color: #a780e2;
+      margin-right: 0.4em;
+    }
+    button[type="submit"], .botao, .botao-padrao {
+      background: linear-gradient(90deg,#6e33ae 80%,#bfa2e7 110%);
+      color: #fff;
+      padding: 0.90em 1.6em;
+      border: none;
+      border-radius: 0.7em;
+      min-width: 130px;
+      font-weight: 700;
+      font-size: 1.06em;
+      box-shadow: 0 1px 8px #a994c829;
+      cursor: pointer;
+      transition: filter .19s;
+      margin: 1.2em auto 0 auto;
+      display: block;
+    }
+    button[disabled], .botao[disabled] {
+      filter: grayscale(0.65);
+      opacity: 0.56;
+      cursor: not-allowed;
+    }
+    .msg-resultado, .msg-confirmacao, .msg-erro {
+      margin: 2.5em auto;
+      padding: 1.7em 1em;
+      max-width: 96%;
+      border-radius: 0.8em;
+      background: #ede6fa;
+      color: #3d1064;
+      text-align: left;
+      line-height: 1.55;
+      font-size: 1.08em;
+      font-weight: 500;
+      box-shadow: 0 1px 8px #aa88cc15;
+    }
+    .msg-confirmacao {
+      background: #e8ffe4;
+      color: #21753e;
+      border: 1.5px solid #a0efa8;
+    }
+    .msg-erro {
+      border: 2px solid #e97fa9;
+      background: #f9e7f2;
+      color: #b62b62;
+    }
+    .alerta-critico {
+      background: #ffcdea;
+      color: #c51d6e;
+      border: 1.6px solid #e97fa9;
+      padding: 1.2em 0.9em 1em 1.5em;
+      border-radius: 0.7em;
+      margin-bottom: 1.5em;
+      font-size: 1.11em;
+      font-weight: 700;
+      box-shadow: 0 1px 8px #aa88cc18;
+    }
+    @media (max-width: 600px) {
+      main {padding: 0.7em;}
+      form {padding: 1em 0.2em;}
+      .dominio-group {padding: 1em 0.3em;}
+      .opcoes {gap: 1em;}
+      button[type="submit"] {min-width:100px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Placeholder: logomarca ou avatar médica aqui -->
+    <h1>Rastreio de Saúde Mental Feminina</h1>
+    <div style="font-size:1.03em;font-weight:500;opacity:0.85;">
+      Autoavaliação de sinais em diferentes áreas emocionais e comportamentais<br>
+      <span style="font-size:0.98em;font-weight:400;">Inspirado em instrumentos validados e adaptado para mulheres adultas. Psic. Dra. Camila Lino - CRM 274280 SP</span>
+    </div>
+  </header>
+  <main>
+    <form id="form-rastreio" novalidate autocomplete="off">
+      <div class="campo">
+        <label for="nomePaciente">Nome completo</label>
+        <input type="text" required id="nomePaciente" name="nomePaciente" maxlength="80" autocomplete="name">
+      </div>
+      <div class="campo">
+        <label for="dataNascimento">Data de nascimento</label>
+        <input type="date" required id="dataNascimento" name="dataNascimento">
+      </div>
+      <div class="campo">
+        <label for="dataAplicacao">Data de hoje</label>
+        <input type="date" required id="dataAplicacao" name="dataAplicacao" value="">
+      </div>
+
+      <!-- DOMÍNIOS + PERGUNTAS -->
+      <div id="perguntas-container"></div>
+      <button type="submit">Enviar</button>
+    </form>
+
+    <div id="resultado" style="display: none"></div>
+  </main>
+  <script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwYqtXOpSg8L2fkmdbsrbypgt8H1v_ONTqOIy57GU9Hn7kdMLm7Kb9vuAFpo4Via2Om/exec'; // Substitua pelo seu endpoint
+
+const DOMINIOS = [
+  {
+    nome: "Atenção e Organização",
+    descricao: "Dificuldades com foco, rotina e impulsividade (TDAH, altas habilidades)",
+    perguntas: [
+      {
+        texto: "Tenho dificuldade para manter o foco em tarefas por muito tempo, mesmo em coisas que quero fazer.",
+        sensivel: false,
+      },
+      {
+        texto: "Sinto que sou muito esquecida com compromissos ou objetos (ex: perco coisas, esqueço datas importants).",
+        sensivel: false,
+      },
+      {
+        texto: "Me distraio facilmente com qualquer coisa ao meu redor, mesmo quando preciso terminar algo importante.",
+        sensivel: false,
+      },
+      {
+        texto: "Tenho impulsos de fazer algo sem pensar antes nas consequências.",
+        sensivel: false,
+      },
+      {
+        texto: "Já me disseram que tenho facilidade para aprender rápido ou entender assuntos difíceis.",
+        sensivel: false,
+      }
+    ]
+  },
+  {
+    nome: "Ansiedade e Preocupação",
+    descricao: "Nervosismo, medo, preocupações excessivas (TAG, TOC, fobia)",
+    perguntas: [
+      {
+        texto: "Me preocupo demais com situações que muitas pessoas acham pequenas.",
+        sensivel: false,
+      },
+      {
+        texto: "Me sinto nervosa, tensa ou ansiosa na maior parte dos dias.",
+        sensivel: false,
+      },
+      {
+        texto: "Tenho pensamentos repetitivos ou imagens mentais que não consigo parar, mesmo querendo.",
+        sensivel: false,
+      },
+      {
+        texto: "Preciso conferir, contar ou arrumar coisas várias vezes para aliviar uma ansiedade.",
+        sensivel: false,
+      },
+      {
+        texto: "Tenho medo de que algo ruim aconteça comigo ou com as pessoas que amo, mesmo sem motivo claro.",
+        sensivel: false,
+      }
+    ]
+  },
+  {
+    nome: "Humor e Energia",
+    descricao: "Tristeza, oscilação, energia baixa ou muito alta (depressão maior e funcional, bipolaridade, distimia)",
+    perguntas: [
+      {
+        texto: "Na maioria dos dias, tenho me sentido para baixo, triste ou desanimada.",
+        sensivel: false,
+      },
+      {
+        texto: "Às vezes, sinto que nada do que faço tem graça ou me dá prazer, mesmo coisas que costumava gostar.",
+        sensivel: false,
+      },
+      {
+        texto: "Me sinto sem energia ou cansada na maior parte do tempo, mesmo sem esforço grande.",
+        sensivel: false,
+      },
+      {
+        texto: "Já tive períodos de alguns dias em que me senti muito animada, cheia de energia ou sem precisar dormir tanto.",
+        sensivel: false,
+      },
+      {
+        texto: "Meu humor muda muito rápido, de euforia para tristeza ou raiva em pouco tempo.",
+        sensivel: false,
+      },
+      {
+        texto: "Já pensei que minha vida não faz sentido ou que seria melhor desaparecer.",
+        sensivel: true, // Triagem sensível
+      }
+    ]
+  },
+  {
+    nome: "Identidade, Impulsos e Relacionamentos",
+    descricao: "Dificuldades de identidade, emoções intensas, relações conturbadas (personalidade borderline, impulsividade afetiva)",
+    perguntas: [
+      {
+        texto: "Tenho sentimento instável sobre quem eu sou ou sobre o que quero para minha vida.",
+        sensivel: false,
+      },
+      {
+        texto: "Meus relacionamentos são intensos — mudam de muito próximos para distantes ou complicados de repente.",
+        sensivel: false,
+      },
+      {
+        texto: "Sinto emoções muito intensas, que mudam rápido e me atrapalham nas decisões.",
+        sensivel: false,
+      },
+      {
+        texto: "Já fiz coisas para me machucar de propósito ou tive vontade de me machucar.",
+        sensivel: true,
+      }
+    ]
+  },
+  {
+    nome: "Alimentação e Imagem Corporal",
+    descricao: "Pensamentos sobre corpo, alimentação e controle (transtornos alimentares, autoimagem)",
+    perguntas: [
+      {
+        texto: "Me preocupo demais com meu corpo, peso ou aparência, mesmo quando dizem que está normal.",
+        sensivel: false,
+      },
+      {
+        texto: "Já tentei controlar o que como de forma extrema (ex: ficar longos períodos sem comer, dietas restritivas/ou compulsivas).",
+        sensivel: false,
+      },
+      {
+        texto: "Já comi mais do que precisava de uma vez só, mesmo não estando com fome, e depois me senti mal por isso.",
+        sensivel: false,
+      },
+      {
+        texto: "Costumo me sentir culpada, envergonhada ou com raiva do meu corpo.",
+        sensivel: false,
+      }
+    ]
+  },
+  {
+    nome: "Autismo Feminino e Camuflagem",
+    descricao: "Características ligadas ao espectro do autismo em mulheres (camuflagem/mascaramento social, interesses)",
+    perguntas: [
+      {
+        texto: "Me esforço muito para parecer que estou à vontade em situações sociais, mesmo quando não estou.",
+        sensivel: false,
+      },
+      {
+        texto: "Costumo observar as pessoas e imitar o jeito delas para me encaixar socialmente.",
+        sensivel: false,
+      },
+      {
+        texto: "Sinto que não entendo algumas regras sociais que parecem fáceis para os outros.",
+        sensivel: false,
+      },
+      {
+        texto: "Gosto de me aprofundar muito em poucos assuntos, mais do que a maioria das pessoas.",
+        sensivel: false,
+      }
+    ]
+  }
+];
+
+const ESCALA = [
+  { valor: 0, texto: "Nunca" },
+  { valor: 1, texto: "Às vezes" },
+  { valor: 2, texto: "Frequentemente" },
+  { valor: 3, texto: "Quase sempre" }
+];
+
+window.addEventListener('DOMContentLoaded', function() {
+  // Data de aplicação
+  const hoje = new Date();
+  document.getElementById('dataAplicacao').value = hoje.toISOString().slice(0,10);
+
+  renderizaPerguntas();
+});
+
+/** Gera DOM com as perguntas agrupadas por domínios */
+function renderizaPerguntas() {
+  const container = document.getElementById('perguntas-container');
+  container.innerHTML = '';
+  let domIdx = 0;
+
+  DOMINIOS.forEach((dom, dI) => {
+    const domDiv = document.createElement('div');
+    domDiv.className = 'dominio-group';
+    domDiv.innerHTML =
+      `<h2>${dom.nome}</h2><div style="font-size:0.97em;color:#5c4f63;line-height:1.45;margin-bottom:1em;">${dom.descricao}</div>`;
+    dom.perguntas.forEach((perg, pI) => {
+      const pergId = `dom${dI}_perg${pI}`;
+      const pDiv = document.createElement('div');
+      pDiv.className = 'pergunta';
+      pDiv.innerText = perg.texto;
+
+      const opcoesDiv = document.createElement('div');
+      opcoesDiv.className = 'opcoes';
+      ESCALA.forEach(e => {
+        const opDiv = document.createElement('div');
+        opDiv.className = 'opcao';
+        const opInput = document.createElement('input');
+        opInput.type = 'radio';
+        opInput.name = pergId;
+        opInput.value = e.valor;
+        opInput.required = true;
+        opInput.setAttribute('data-dominio', dom.nome);
+        opInput.setAttribute('data-pergunta', perg.texto);
+        if (perg.sensivel) opInput.setAttribute('data-sensivel', '1');
+        opDiv.appendChild(opInput);
+        const opLab = document.createElement('label');
+        opLab.innerText = e.texto;
+        opLab.setAttribute('for', pergId+"_opt"+e.valor);
+        opDiv.appendChild(opLab);
+        opcoesDiv.appendChild(opDiv);
+      });
+      domDiv.appendChild(pDiv);
+      domDiv.appendChild(opcoesDiv);
+    });
+    container.appendChild(domDiv);
+    domIdx++;
+  });
+}
+
+// Captura, calcula, envia
+document.getElementById('form-rastreio').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const nomePaciente = document.getElementById('nomePaciente').value.trim();
+  const dataNascimento = document.getElementById('dataNascimento').value;
+  const dataAplicacao = document.getElementById('dataAplicacao').value;
+
+  let valid = true, camposRequeridos = [nomePaciente, dataNascimento, dataAplicacao];
+  camposRequeridos.forEach(val => { if(!val) valid = false; });
+  // Validate todas questions
+  let totalPergs = 0, respondidas = 0;
+  DOMINIOS.forEach((dom, dI) => {
+    dom.perguntas.forEach((perg, pI) => {
+      totalPergs++;
+      const pergId = `dom${dI}_perg${pI}`;
+      const marcado = document.querySelector(`input[name="${pergId}"]:checked`);
+      if (marcado) respondidas++;
+    });
+  });
+  if (!valid || respondidas < totalPergs) {
+    alert("Por favor, preencha todos os campos e assinale todas as perguntas antes de enviar.");
+    return;
+  }
+
+  // Calcula pontuações
+  const respostas = [];
+  const dominiosResult = [];
+  let pontuacaoTotal = 0, pontuacaoMaxima = 0;
+  let alertasCriticos = [];
+
+  DOMINIOS.forEach((dom, dI) => {
+    let domPts = 0, domPtsMax = dom.perguntas.length * (ESCALA.length-1);
+    dom.perguntas.forEach((perg, pI) => {
+      const pergId = `dom${dI}_perg${pI}`;
+      const marcado = document.querySelector(`input[name="${pergId}"]:checked`);
+      const valor = parseInt(marcado.value);
+      domPts += valor;
+      respostas.push({
+        dominio: dom.nome,
+        pergunta: perg.texto,
+        resposta: ESCALA.find(x=>x.valor === valor).texto,
+        pontos: valor
+      });
+      // Tria alertas críticos
+      if (perg.sensivel && (valor >= (ESCALA.length-2))) {
+        alertasCriticos.push({
+          pergunta: perg.texto,
+          resposta: ESCALA.find(x=>x.valor === valor).texto,
+          motivo: "resposta de maior gravidade em item de risco"
+        });
+      }
+    });
+    pontuacaoTotal += domPts;
+    pontuacaoMaxima += domPtsMax;
+    dominiosResult.push({
+      nome: dom.nome,
+      pontuacao: domPts,
+      pontuacaoMaxima: domPtsMax
+    });
+  });
+
+  // Interpretação geral
+  const interpretacaoGeral = geraInterpretacao(dominiosResult, pontuacaoTotal, pontuacaoMaxima);
+
+  // Resultado na tela
+  showResultado(interpretacaoGeral, dominiosResult, pontuacaoTotal, pontuacaoMaxima, alertasCriticos);
+
+  // Payload (contrato)
+  const payload = {
+    nomePaciente,
+    dataNascimento,
+    dataAplicacao,
+    dominios: dominiosResult,
+    respostas: respostas,
+    pontuacaoTotal,
+    pontuacaoMaxima,
+    interpretacaoGeral,
+    alertasCriticos
+  };
+
+  enviarToGAS(payload);
+});
+
+function showResultado(interpretacaoGeral, dominios, pontTotal, pontMax, alertasCriticos){
+  const resDiv = document.getElementById('resultado');
+  resDiv.innerHTML = ''; // Reset
+
+  if (alertasCriticos && alertasCriticos.length) {
+    alertasCriticos.forEach(a => {
+      resDiv.innerHTML += `
+        <div class="alerta-critico">
+          <strong>Atenção!</strong><br>
+          Resposta sensível:<br>
+          <em>${a.pergunta}</em><br>
+          <strong>Resposta:</strong> ${a.resposta}<br>
+        </div>
+      `;
+    });
+  }
+  resDiv.innerHTML += `
+    <div class="msg-resultado">
+      <strong>Interpretação geral do rastreio:</strong><br><br>
+      ${interpretacaoGeral}
+      <div style="margin-top:1.5em;margin-bottom:0.5em;color:#6e33ae;font-weight:600;">Resumo por domínios:</div>
+      <ul style="padding-left:1.2em;padding-bottom:0.7em;">
+        ${dominios.map(d=>`<li>${d.nome}: <b>${d.pontuacao}</b> / ${d.pontuacaoMaxima}</li>`).join("")}
+      </ul>
+      <div style="font-size:0.97em;opacity:0.68;margin-top:1.2em;">
+        Lembre-se: este rastreio é uma autoavaliação orientativa e não substitui uma consulta médica.<br>
+        Se você marcou respostas preocupantes ou se sente em risco, busque apoio profissional.
+      </div>
+    </div>
+  `;
+  resDiv.style.display = 'block';
+  // Esconde formulário para evitar duplo envio
+  document.getElementById('form-rastreio').style.display = 'none';
+}
+
+// Interpretação adaptada (gentil, sem diagnóstico, dá sugestões por nível geral e domínio)
+function geraInterpretacao(dominios, total, maximo) {
+  // Limiares gerais:
+  // 0-20%: poucos sinais
+  // 20-40%: atenção a áreas específicas
+  // 40-60%: vários sinais, procure escuta profissional
+  // >60%: recomenda avaliação profissional mais detalhada
+
+  let pct = ((total/maximo)*100), frases=[];
+  if (pct < 21)
+    frases.push("Você marcou poucos sinais de dificuldade emocional ou comportamental nesse rastreio. Siga cuidando da sua saúde e bem-estar.");
+  else if (pct < 41)
+    frases.push("Você sinalizou algumas áreas que merecem atenção. Observe situações do dia a dia em que você pode buscar mais apoio ou autocuidado.");
+  else if (pct < 61)
+    frases.push("Vários pontos do rastreio apareceram com intensidade. Considere conversar com um(a) profissional de saúde mental sobre como se sente.");
+  else
+    frases.push("Você marcou respostas importantes em múltiplas áreas. Orientamos que busque avaliação qualificada para cuidado mais aprofundado.");
+
+  // Identifica domínios altos (>50% dom)
+  const domsAcima = dominios.filter(d=>((d.pontuacao/d.pontuacaoMaxima)*100)>50);
+  if (domsAcima.length) {
+    frases.push("<br>Os seguintes temas apareceram com destaque no seu rastreio: <b>"+domsAcima.map(d=>d.nome).join(', ')+"</b>.");
+  }
+  return frases.join(' ');
+}
+
+// Envia para GAS
+function enviarToGAS(payload) {
+  fetch(GAS_URL, {
+    method: "POST",
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  })
+  .then(resp => {
+    if (!resp.ok) throw new Error("Erro de rede");
+    return resp.text();
+  })
+  .then(res => {
+    document.getElementById('resultado').innerHTML += `
+      <div class="msg-confirmacao"><b>Seus dados foram enviados com sucesso.</b><br>
+      Caso precise conversar sobre as respostas, leve este rastreio para sua consulta médica.</div>`;
+  })
+  .catch(err => {
+    document.getElementById('resultado').innerHTML += `
+      <div class="msg-erro"><b>Não foi possível enviar suas respostas agora.</b><br>
+      Por favor, tente novamente em alguns minutos.<br>
+      Se o problema continuar, entre em contato com a equipe.</div>`;
+  });
+}
+  </script>
+</body>
+</html>
