@@ -200,6 +200,15 @@
         <input type="date" required id="dataAplicacao" name="dataAplicacao" value="">
       </div>
       <div class="campo">
+        <label for="unidade">Unidade de atendimento</label>
+        <select required id="unidade" name="unidade">
+          <option value="" disabled selected>Selecione...</option>
+          <option value="Mogi das Cruzes">Mogi das Cruzes</option>
+          <option value="São Paulo">São Paulo</option>
+          <option value="Particular">Particular</option>
+        </select>
+      </div>
+      <div class="campo">
         <label for="emailPaciente">Seu e-mail (opcional)</label>
         <input type="email" id="emailPaciente" name="emailPaciente" maxlength="120" placeholder="Só se você quiser receber uma cópia das suas respostas">
         <div style="font-size:0.85em;color:#7a6d8a;margin-top:0.3em;">Se preencher, você recebe uma cópia das perguntas e respostas. A análise clínica vai só para a médica.</div>
@@ -360,6 +369,7 @@ function salvarRascunho(){
     const dados = {
       nomePaciente: document.getElementById('nomePaciente').value,
       dataNascimento: document.getElementById('dataNascimento').value,
+      unidade: document.getElementById('unidade').value,
       emailPaciente: document.getElementById('emailPaciente').value,
       comentarioLivre: document.getElementById('comentarioLivre').value,
       respostas: {}
@@ -382,6 +392,7 @@ function restaurarRascunho(){
 
   if(dados.nomePaciente) document.getElementById('nomePaciente').value = dados.nomePaciente;
   if(dados.dataNascimento) document.getElementById('dataNascimento').value = dados.dataNascimento;
+  if(dados.unidade) document.getElementById('unidade').value = dados.unidade;
   if(dados.emailPaciente) document.getElementById('emailPaciente').value = dados.emailPaciente;
   if(dados.comentarioLivre) document.getElementById('comentarioLivre').value = dados.comentarioLivre;
   if(dados.respostas){
@@ -451,10 +462,11 @@ document.getElementById('form-rastreio').addEventListener('submit', function(e){
   const nomePaciente = document.getElementById('nomePaciente').value.trim();
   const dataNascimento = document.getElementById('dataNascimento').value;
   const dataAplicacao = document.getElementById('dataAplicacao').value;
+  const unidade = document.getElementById('unidade').value;
   const emailPaciente = document.getElementById('emailPaciente').value.trim();
   const comentarioLivre = document.getElementById('comentarioLivre').value.trim();
 
-  let valid = true, camposRequeridos = [nomePaciente, dataNascimento, dataAplicacao];
+  let valid = true, camposRequeridos = [nomePaciente, dataNascimento, dataAplicacao, unidade];
   camposRequeridos.forEach(val => { if(!val) valid = false; });
   // Validate todas questions
   let totalPergs = 0, respondidas = 0, primeiraFaltando = null;
@@ -537,6 +549,7 @@ document.getElementById('form-rastreio').addEventListener('submit', function(e){
     nomePaciente,
     dataNascimento,
     dataAplicacao,
+    unidade,
     emailPaciente,
     comentarioLivre,
     dominios: dominiosResult,
