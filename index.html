@@ -184,21 +184,35 @@
         <label for="dataAplicacao">Data de hoje</label>
         <input type="date" required id="dataAplicacao" name="dataAplicacao" value="">
       </div>
+      <div class="campo">
+        <label for="emailPaciente">Seu e-mail (opcional)</label>
+        <input type="email" id="emailPaciente" name="emailPaciente" maxlength="120" placeholder="Só se você quiser receber uma cópia das suas respostas">
+        <div style="font-size:0.85em;color:#7a6d8a;margin-top:0.3em;">Se preencher, você recebe uma cópia das perguntas e respostas. A análise clínica vai só para a médica.</div>
+      </div>
+      <div id="rascunho-aviso" style="display:none; background:#fff3cd; color:#7a5c00; border-radius:0.6em; padding:0.8em 1em; margin-bottom:1em; font-size:0.95em;">
+        Recuperamos suas respostas de uma sessão anterior que não foi enviada. <button type="button" onclick="limparRascunho()" style="background:none;border:none;color:#6e33ae;text-decoration:underline;cursor:pointer;padding:0;font-size:1em;">Começar do zero</button>
+      </div>
 
       <!-- DOMÍNIOS + PERGUNTAS -->
       <div id="perguntas-container"></div>
+
+      <div class="campo" style="margin-top:1.5em;">
+        <label for="comentarioLivre">Quer contar mais alguma coisa? (opcional)</label>
+        <textarea id="comentarioLivre" name="comentarioLivre" rows="4" maxlength="1500" style="padding:0.6em 0.8em;border-radius:0.4em;border:1px solid #ccc;font-family:inherit;font-size:1em;background:#fcf9ff;resize:vertical;" placeholder="Qualquer coisa que você ache importante e que não foi perguntada aqui."></textarea>
+      </div>
+
       <button type="submit">Enviar</button>
     </form>
 
     <div id="resultado" style="display: none"></div>
   </main>
   <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwYqtXOpSg8L2fkmdbsrbypgt8H1v_ONTqOIy57GU9Hn7kdMLm7Kb9vuAFpo4Via2Om/exec'; // Substitua pelo seu endpoint
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxZaXv9NxG-SlnE_AC2MDzR21g7Vlbmg0_2tQv9bd6o1J361r0Jpd5WLE93mzCShnwy/exec';
 
 const DOMINIOS = [
   {
     nome: "Atenção e Organização",
-    descricao: "Dificuldades com foco, rotina e impulsividade (TDAH, altas habilidades)",
+    descricao: "Dificuldades com foco, rotina e impulsividade no dia a dia",
     perguntas: [
       {
         texto: "Tenho dificuldade para manter o foco em tarefas por muito tempo, mesmo em coisas que quero fazer.",
@@ -224,7 +238,7 @@ const DOMINIOS = [
   },
   {
     nome: "Ansiedade e Preocupação",
-    descricao: "Nervosismo, medo, preocupações excessivas (TAG, TOC, fobia)",
+    descricao: "Nervosismo, medo, preocupações excessivas e pensamentos repetitivos",
     perguntas: [
       {
         texto: "Me preocupo demais com situações que muitas pessoas acham pequenas.",
@@ -250,7 +264,7 @@ const DOMINIOS = [
   },
   {
     nome: "Humor e Energia",
-    descricao: "Tristeza, oscilação, energia baixa ou muito alta (depressão maior e funcional, bipolaridade, distimia)",
+    descricao: "Tristeza, oscilação de humor, energia baixa ou muito alta",
     perguntas: [
       {
         texto: "Na maioria dos dias, tenho me sentido para baixo, triste ou desanimada.",
@@ -280,7 +294,7 @@ const DOMINIOS = [
   },
   {
     nome: "Identidade, Impulsos e Relacionamentos",
-    descricao: "Dificuldades de identidade, emoções intensas, relações conturbadas (personalidade borderline, impulsividade afetiva)",
+    descricao: "Dificuldades de identidade, emoções intensas e relações conturbadas",
     perguntas: [
       {
         texto: "Tenho sentimento instável sobre quem eu sou ou sobre o que quero para minha vida.",
@@ -302,7 +316,7 @@ const DOMINIOS = [
   },
   {
     nome: "Alimentação e Imagem Corporal",
-    descricao: "Pensamentos sobre corpo, alimentação e controle (transtornos alimentares, autoimagem)",
+    descricao: "Pensamentos sobre corpo, alimentação e controle",
     perguntas: [
       {
         texto: "Me preocupo demais com meu corpo, peso ou aparência, mesmo quando dizem que está normal.",
@@ -323,8 +337,8 @@ const DOMINIOS = [
     ]
   },
   {
-    nome: "Autismo Feminino e Camuflagem",
-    descricao: "Características ligadas ao espectro do autismo em mulheres (camuflagem/mascaramento social, interesses)",
+    nome: "Comunicação e Sensibilidades Sociais",
+    descricao: "Como você se comporta e se sente em situações sociais e sensoriais do dia a dia",
     perguntas: [
       {
         texto: "Me esforço muito para parecer que estou à vontade em situações sociais, mesmo quando não estou.",
@@ -359,7 +373,54 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('dataAplicacao').value = hoje.toISOString().slice(0,10);
 
   renderizaPerguntas();
+  restaurarRascunho();
+  document.getElementById('form-rastreio').addEventListener('input', salvarRascunho);
 });
+
+const CHAVE_RASCUNHO = 'rastreio_mulheres_rascunho_v1';
+
+function salvarRascunho(){
+  try{
+    const dados = {
+      nomePaciente: document.getElementById('nomePaciente').value,
+      dataNascimento: document.getElementById('dataNascimento').value,
+      emailPaciente: document.getElementById('emailPaciente').value,
+      comentarioLivre: document.getElementById('comentarioLivre').value,
+      respostas: {}
+    };
+    document.querySelectorAll('#perguntas-container input[type="radio"]:checked').forEach(r=>{
+      dados.respostas[r.name] = r.value;
+    });
+    localStorage.setItem(CHAVE_RASCUNHO, JSON.stringify(dados));
+  }catch(e){ /* localStorage indisponível, segue sem rascunho */ }
+}
+
+function restaurarRascunho(){
+  let dados;
+  try{
+    const raw = localStorage.getItem(CHAVE_RASCUNHO);
+    if(!raw) return;
+    dados = JSON.parse(raw);
+  }catch(e){ return; }
+  if(!dados) return;
+
+  if(dados.nomePaciente) document.getElementById('nomePaciente').value = dados.nomePaciente;
+  if(dados.dataNascimento) document.getElementById('dataNascimento').value = dados.dataNascimento;
+  if(dados.emailPaciente) document.getElementById('emailPaciente').value = dados.emailPaciente;
+  if(dados.comentarioLivre) document.getElementById('comentarioLivre').value = dados.comentarioLivre;
+  if(dados.respostas){
+    Object.keys(dados.respostas).forEach(name=>{
+      const input = document.querySelector(`input[name="${name}"][value="${dados.respostas[name]}"]`);
+      if(input) input.checked = true;
+    });
+  }
+  document.getElementById('rascunho-aviso').style.display = 'block';
+}
+
+function limparRascunho(){
+  try{ localStorage.removeItem(CHAVE_RASCUNHO); }catch(e){}
+  window.location.reload();
+}
 
 /** Gera DOM com as perguntas agrupadas por domínios */
 function renderizaPerguntas() {
@@ -413,21 +474,41 @@ document.getElementById('form-rastreio').addEventListener('submit', function(e){
   const nomePaciente = document.getElementById('nomePaciente').value.trim();
   const dataNascimento = document.getElementById('dataNascimento').value;
   const dataAplicacao = document.getElementById('dataAplicacao').value;
+  const emailPaciente = document.getElementById('emailPaciente').value.trim();
+  const comentarioLivre = document.getElementById('comentarioLivre').value.trim();
 
   let valid = true, camposRequeridos = [nomePaciente, dataNascimento, dataAplicacao];
   camposRequeridos.forEach(val => { if(!val) valid = false; });
   // Validate todas questions
-  let totalPergs = 0, respondidas = 0;
+  let totalPergs = 0, respondidas = 0, primeiraFaltando = null;
   DOMINIOS.forEach((dom, dI) => {
     dom.perguntas.forEach((perg, pI) => {
       totalPergs++;
       const pergId = `dom${dI}_perg${pI}`;
       const marcado = document.querySelector(`input[name="${pergId}"]:checked`);
       if (marcado) respondidas++;
+      else if (!primeiraFaltando) primeiraFaltando = pergId;
     });
   });
   if (!valid || respondidas < totalPergs) {
-    alert("Por favor, preencha todos os campos e assinale todas as perguntas antes de enviar.");
+    let avisoDiv = document.getElementById('aviso-incompleto');
+    if(!avisoDiv){
+      avisoDiv = document.createElement('div');
+      avisoDiv.id = 'aviso-incompleto';
+      avisoDiv.className = 'msg-erro';
+      document.getElementById('form-rastreio').prepend(avisoDiv);
+    }
+    const faltam = totalPergs - respondidas;
+    avisoDiv.innerHTML = !valid
+      ? '<b>Faltou preencher nome, data de nascimento ou data de hoje.</b> Completa esses campos antes de enviar.'
+      : `<b>Ainda faltam ${faltam} pergunta${faltam>1?'s':''} pra responder.</b> Rola a página e completa antes de enviar — suas respostas já ficam salvas automaticamente, então não precisa recomeçar.`;
+    avisoDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if(valid && primeiraFaltando){
+      setTimeout(()=>{
+        const el = document.querySelector(`input[name="${primeiraFaltando}"]`);
+        if(el) el.closest('.dominio-group').scrollIntoView({ behavior:'smooth', block:'center' });
+      }, 400);
+    }
     return;
   }
 
@@ -479,6 +560,8 @@ document.getElementById('form-rastreio').addEventListener('submit', function(e){
     nomePaciente,
     dataNascimento,
     dataAplicacao,
+    emailPaciente,
+    comentarioLivre,
     dominios: dominiosResult,
     respostas: respostas,
     pontuacaoTotal,
@@ -563,6 +646,7 @@ function enviarToGAS(payload) {
     return resp.text();
   })
   .then(res => {
+    try{ localStorage.removeItem(CHAVE_RASCUNHO); }catch(e){}
     document.getElementById('resultado').innerHTML += `
       <div class="msg-confirmacao"><b>Seus dados foram enviados com sucesso.</b><br>
       Caso precise conversar sobre as respostas, leve este rastreio para sua consulta médica.</div>`;
