@@ -83,20 +83,35 @@
       font-weight: 500;
     }
     .opcoes {
-      margin: 0.4em 0 0.6em 1em;
+      margin: 0.6em 0 0.8em 0;
       display: flex;
-      gap: 1.8em;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 0.6em;
     }
     .opcao {
-      display: flex;
-      align-items: center;
-      font-size: 0.98em;
-      margin-bottom: 0.3em;
+      display: block;
     }
     .opcao input[type="radio"] {
-      accent-color: #a780e2;
-      margin-right: 0.4em;
+      display: none;
+    }
+    .opcao label {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 1em;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: #f7f6fb;
+      border: 1.5px solid #e4dff2;
+      cursor: pointer;
+      min-height: 44px;
+      transition: background 0.15s, border 0.15s;
+    }
+    .opcao input[type="radio"]:checked + label {
+      background: #ded6ef;
+      border: 1.5px solid #a780e2;
+      font-weight: 600;
+      color: #5a3a8a;
     }
     button[type="submit"], .botao, .botao-padrao {
       background: linear-gradient(90deg,#6e33ae 80%,#bfa2e7 110%);
@@ -281,7 +296,9 @@ const DOMINIOS = [
       { texto: "Já tive períodos de alguns dias em que me senti muito animada, cheia de energia ou sem precisar dormir tanto.", sensivel: false },
       { texto: "Nesses períodos de muita energia, falo muito mais rápido ou tenho mais ideias do que consigo acompanhar.", sensivel: false },
       { texto: "Nesses períodos, tomo decisões mais impulsivas do que tomaria normalmente (gastos, relacionamentos, projetos).", sensivel: false },
-      { texto: "Meu humor muda muito rápido, de euforia para irritação ou tristeza em pouco tempo.", sensivel: false }
+      { texto: "Meu humor muda muito rápido, de euforia para irritação ou tristeza em pouco tempo.", sensivel: false },
+      { texto: "Esses períodos de muita energia já duraram uma semana ou mais, com uma mudança tão intensa que atrapalhou seriamente meu trabalho, relacionamentos ou julgamento.", sensivel: false },
+      { texto: "Esses períodos costumam ser mais curtos (poucos dias) e mais leves, perceptíveis pra quem me conhece, mas sem chegar a me atrapalhar seriamente ou exigir ajuda de outras pessoas.", sensivel: false }
     ]
   },
   {
@@ -406,6 +423,7 @@ function renderizaPerguntas() {
         const opInput = document.createElement('input');
         opInput.type = 'radio';
         opInput.name = pergId;
+        opInput.id = pergId+"_opt"+e.valor;
         opInput.value = e.valor;
         opInput.required = true;
         opInput.setAttribute('data-dominio', dom.nome);
