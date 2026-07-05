@@ -591,16 +591,7 @@ function showResultado(interpretacaoGeral, dominios, pontTotal, pontMax, alertas
   }
   resDiv.innerHTML += `
     <div class="msg-resultado">
-      <strong>Interpretação geral do rastreio:</strong><br><br>
       ${interpretacaoGeral}
-      <div style="margin-top:1.5em;margin-bottom:0.5em;color:#6e33ae;font-weight:600;">Resumo por domínios:</div>
-      <ul style="padding-left:1.2em;padding-bottom:0.7em;">
-        ${dominios.map(d=>`<li>${d.nome}: <b>${d.pontuacao}</b> / ${d.pontuacaoMaxima}</li>`).join("")}
-      </ul>
-      <div style="font-size:0.97em;opacity:0.68;margin-top:1.2em;">
-        Lembre-se: este rastreio é uma autoavaliação orientativa e não substitui uma consulta médica.<br>
-        Se você marcou respostas preocupantes ou se sente em risco, busque apoio profissional.
-      </div>
     </div>
   `;
   resDiv.style.display = 'block';
@@ -608,30 +599,34 @@ function showResultado(interpretacaoGeral, dominios, pontTotal, pontMax, alertas
   document.getElementById('form-rastreio').style.display = 'none';
 }
 
-// Interpretação adaptada (gentil, sem diagnóstico, dá sugestões por nível geral e domínio)
+// Interpretação adaptada (gentil, sem diagnóstico, cita áreas por nome mas nunca números/percentuais)
 function geraInterpretacao(dominios, total, maximo) {
-  // Limiares gerais:
-  // 0-20%: poucos sinais
-  // 20-40%: atenção a áreas específicas
-  // 40-60%: vários sinais, procure escuta profissional
-  // >60%: recomenda avaliação profissional mais detalhada
-
-  let pct = ((total/maximo)*100), frases=[];
-  if (pct < 21)
-    frases.push("Você marcou poucos sinais de dificuldade emocional ou comportamental nesse rastreio. Siga cuidando da sua saúde e bem-estar.");
-  else if (pct < 41)
-    frases.push("Você sinalizou algumas áreas que merecem atenção. Observe situações do dia a dia em que você pode buscar mais apoio ou autocuidado.");
-  else if (pct < 61)
-    frases.push("Vários pontos do rastreio apareceram com intensidade. Considere conversar com um(a) profissional de saúde mental sobre como se sente.");
-  else
-    frases.push("Você marcou respostas importantes em múltiplas áreas. Orientamos que busque avaliação qualificada para cuidado mais aprofundado.");
-
-  // Identifica domínios altos (>50% dom)
-  const domsAcima = dominios.filter(d=>((d.pontuacao/d.pontuacaoMaxima)*100)>50);
-  if (domsAcima.length) {
-    frases.push("<br>Os seguintes temas apareceram com destaque no seu rastreio: <b>"+domsAcima.map(d=>d.nome).join(', ')+"</b>.");
+  function listaNatural(arr){
+    if(arr.length===0) return '';
+    if(arr.length===1) return arr[0];
+    return arr.slice(0,-1).join(', ') + ' e ' + arr[arr.length-1];
   }
-  return frases.join(' ');
+
+  // Domínios com pontuação moderada/alta (≥40%), sem expor o percentual ao paciente
+  const destaques = dominios
+    .filter(d => d.pontuacaoMaxima && ((d.pontuacao/d.pontuacaoMaxima)*100) >= 40)
+    .sort((a,b) => (b.pontuacao/b.pontuacaoMaxima) - (a.pontuacao/a.pontuacaoMaxima))
+    .slice(0, 4)
+    .map(d => d.nome.charAt(0).toLowerCase() + d.nome.slice(1));
+
+  let texto = "Obrigada por preencher o rastreio.<br><br>";
+
+  if (destaques.length === 0) {
+    texto += "Suas respostas não indicaram pontos de maior intensidade neste momento. Ainda assim, se algo do seu dia a dia te incomoda, vale conversar sobre isso na consulta.<br><br>";
+  } else {
+    texto += `Suas respostas mostram que alguns pontos merecem ser conversados com mais atenção em consulta, principalmente em relação a ${listaNatural(destaques)}.<br><br>`;
+  }
+
+  texto += "Esse resultado não fecha diagnóstico e não significa, sozinho, que você tenha algum transtorno específico. Ele serve apenas como uma triagem inicial para ajudar a entender melhor quais áreas podem estar trazendo sofrimento ou dificuldade no dia a dia.<br><br>";
+  texto += "Na consulta, vamos avaliar esses pontos com mais calma, considerando sua história, sintomas, rotina, intensidade das dificuldades e impacto na sua vida.<br><br>";
+  texto += "Caso você esteja se sentindo em sofrimento intenso, com risco para si ou para outra pessoa, procure atendimento de urgência imediatamente.";
+
+  return texto;
 }
 
 // Envia para GAS
