@@ -207,155 +207,114 @@
     <div id="resultado" style="display: none"></div>
   </main>
   <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxZaXv9NxG-SlnE_AC2MDzR21g7Vlbmg0_2tQv9bd6o1J361r0Jpd5WLE93mzCShnwy/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbybjZObx0bre37Qfg3JLDJsy64MVl_yQpE5V-VX1WoaebNuUWVJBAGlaVEAQfnDOqSv/exec';
 
 const DOMINIOS = [
   {
     nome: "Atenção e Organização",
     descricao: "Dificuldades com foco, rotina e impulsividade no dia a dia",
     perguntas: [
-      {
-        texto: "Tenho dificuldade para manter o foco em tarefas por muito tempo, mesmo em coisas que quero fazer.",
-        sensivel: false,
-      },
-      {
-        texto: "Sinto que sou muito esquecida com compromissos ou objetos (ex: perco coisas, esqueço datas importants).",
-        sensivel: false,
-      },
-      {
-        texto: "Me distraio facilmente com qualquer coisa ao meu redor, mesmo quando preciso terminar algo importante.",
-        sensivel: false,
-      },
-      {
-        texto: "Tenho impulsos de fazer algo sem pensar antes nas consequências.",
-        sensivel: false,
-      },
-      {
-        texto: "Já me disseram que tenho facilidade para aprender rápido ou entender assuntos difíceis.",
-        sensivel: false,
-      }
+      { texto: "Tenho dificuldade para manter o foco em tarefas por muito tempo, mesmo em coisas que quero fazer.", sensivel: false },
+      { texto: "Sinto que sou muito esquecida com compromissos ou objetos (ex: perco coisas, esqueço datas importantes).", sensivel: false },
+      { texto: "Me distraio facilmente com qualquer coisa ao meu redor, mesmo quando preciso terminar algo importante.", sensivel: false },
+      { texto: "Tenho impulsos de fazer algo sem pensar antes nas consequências.", sensivel: false },
+      { texto: "Sinto uma inquietação interna, como se precisasse estar sempre fazendo alguma coisa.", sensivel: false }
     ]
   },
   {
-    nome: "Ansiedade e Preocupação",
-    descricao: "Nervosismo, medo, preocupações excessivas e pensamentos repetitivos",
+    nome: "Aprendizado Rápido e Interesses Intensos",
+    descricao: "Facilidade de aprendizado, curiosidade intensa e padrões de pensamento fora do comum",
     perguntas: [
-      {
-        texto: "Me preocupo demais com situações que muitas pessoas acham pequenas.",
-        sensivel: false,
-      },
-      {
-        texto: "Me sinto nervosa, tensa ou ansiosa na maior parte dos dias.",
-        sensivel: false,
-      },
-      {
-        texto: "Tenho pensamentos repetitivos ou imagens mentais que não consigo parar, mesmo querendo.",
-        sensivel: false,
-      },
-      {
-        texto: "Preciso conferir, contar ou arrumar coisas várias vezes para aliviar uma ansiedade.",
-        sensivel: false,
-      },
-      {
-        texto: "Tenho medo de que algo ruim aconteça comigo ou com as pessoas que amo, mesmo sem motivo claro.",
-        sensivel: false,
-      }
+      { texto: "Já me disseram que tenho facilidade para aprender rápido ou entender assuntos difíceis.", sensivel: false },
+      { texto: "Quando um assunto me interessa, eu me aprofundo muito mais do que a maioria das pessoas ao meu redor.", sensivel: false },
+      { texto: "Costumo enxergar conexões ou soluções que outras pessoas não percebem tão rápido.", sensivel: false },
+      { texto: "Sinto tédio ou frustração intensa com tarefas repetitivas ou que considero simples demais.", sensivel: false },
+      { texto: "Tenho um padrão de exigência muito alto comigo mesma, quase perfeccionista.", sensivel: false }
     ]
   },
   {
-    nome: "Humor e Energia",
-    descricao: "Tristeza, oscilação de humor, energia baixa ou muito alta",
+    nome: "Preocupação e Tensão do Dia a Dia",
+    descricao: "Nervosismo, medo e preocupações excessivas",
     perguntas: [
-      {
-        texto: "Na maioria dos dias, tenho me sentido para baixo, triste ou desanimada.",
-        sensivel: false,
-      },
-      {
-        texto: "Às vezes, sinto que nada do que faço tem graça ou me dá prazer, mesmo coisas que costumava gostar.",
-        sensivel: false,
-      },
-      {
-        texto: "Me sinto sem energia ou cansada na maior parte do tempo, mesmo sem esforço grande.",
-        sensivel: false,
-      },
-      {
-        texto: "Já tive períodos de alguns dias em que me senti muito animada, cheia de energia ou sem precisar dormir tanto.",
-        sensivel: false,
-      },
-      {
-        texto: "Meu humor muda muito rápido, de euforia para tristeza ou raiva em pouco tempo.",
-        sensivel: false,
-      },
-      {
-        texto: "Já pensei que minha vida não faz sentido ou que seria melhor desaparecer.",
-        sensivel: true, // Triagem sensível
-      }
+      { texto: "Me preocupo demais com situações que muitas pessoas acham pequenas.", sensivel: false },
+      { texto: "Me sinto nervosa, tensa ou ansiosa na maior parte dos dias.", sensivel: false },
+      { texto: "Tenho medo de que algo ruim aconteça comigo ou com as pessoas que amo, mesmo sem motivo claro.", sensivel: false },
+      { texto: "Sinto tensão no corpo (músculos travados, dor de cabeça, estômago embrulhado) quando estou ansiosa.", sensivel: false },
+      { texto: "Tenho dificuldade para relaxar ou 'desligar' a mente, mesmo em momentos de descanso.", sensivel: false }
+    ]
+  },
+  {
+    nome: "Pensamentos Repetitivos e Rituais",
+    descricao: "Pensamentos que voltam sem parar e comportamentos repetidos para aliviar desconforto",
+    perguntas: [
+      { texto: "Tenho pensamentos repetitivos ou imagens mentais que não consigo parar, mesmo querendo.", sensivel: false },
+      { texto: "Preciso conferir, contar ou arrumar coisas várias vezes para aliviar uma sensação de desconforto.", sensivel: false },
+      { texto: "Sigo certos rituais ou sequências específicas, e fico muito incomodada se algo os interrompe.", sensivel: false },
+      { texto: "Esses pensamentos ou comportamentos repetitivos tomam bastante tempo do meu dia.", sensivel: false }
+    ]
+  },
+  {
+    nome: "Tristeza e Desânimo Recentes",
+    descricao: "Sinais de tristeza, perda de energia ou de prazer nas últimas semanas",
+    perguntas: [
+      { texto: "Na maioria dos dias, nas últimas semanas, tenho me sentido para baixo, triste ou desanimada.", sensivel: false },
+      { texto: "Sinto que nada do que faço tem graça ou me dá prazer, mesmo coisas que costumava gostar.", sensivel: false },
+      { texto: "Me sinto sem energia ou muito cansada na maior parte do tempo, mesmo sem esforço grande.", sensivel: false },
+      { texto: "Mesmo me sentindo mal por dentro, consigo 'segurar as pontas' e continuar dando conta das minhas obrigações por fora.", sensivel: false },
+      { texto: "Já pensei que minha vida não faz sentido ou que seria melhor desaparecer.", sensivel: true }
+    ]
+  },
+  {
+    nome: "Humor Baixo de Longa Duração",
+    descricao: "Um desânimo mais constante e arrastado, presente há muito tempo (não só nas últimas semanas)",
+    perguntas: [
+      { texto: "De forma geral, já faz alguns anos que vivo com um fundo de tristeza ou desânimo, mesmo em fases 'normais' da vida.", sensivel: false },
+      { texto: "Tenho a sensação de que minha autoestima é baixa há muito tempo, não é algo recente.", sensivel: false },
+      { texto: "Mesmo sem um motivo específico, sinto que minha energia costuma ser mais baixa que a da maioria das pessoas há anos.", sensivel: false },
+      { texto: "Esse desânimo mais constante não me impede totalmente de viver, mas está sempre ali, ao fundo.", sensivel: false }
+    ]
+  },
+  {
+    nome: "Períodos de Muita Energia e Euforia",
+    descricao: "Fases em que o humor e a energia sobem muito acima do habitual",
+    perguntas: [
+      { texto: "Já tive períodos de alguns dias em que me senti muito animada, cheia de energia ou sem precisar dormir tanto.", sensivel: false },
+      { texto: "Nesses períodos de muita energia, falo muito mais rápido ou tenho mais ideias do que consigo acompanhar.", sensivel: false },
+      { texto: "Nesses períodos, tomo decisões mais impulsivas do que tomaria normalmente (gastos, relacionamentos, projetos).", sensivel: false },
+      { texto: "Meu humor muda muito rápido, de euforia para irritação ou tristeza em pouco tempo.", sensivel: false }
     ]
   },
   {
     nome: "Identidade, Impulsos e Relacionamentos",
     descricao: "Dificuldades de identidade, emoções intensas e relações conturbadas",
     perguntas: [
-      {
-        texto: "Tenho sentimento instável sobre quem eu sou ou sobre o que quero para minha vida.",
-        sensivel: false,
-      },
-      {
-        texto: "Meus relacionamentos são intensos — mudam de muito próximos para distantes ou complicados de repente.",
-        sensivel: false,
-      },
-      {
-        texto: "Sinto emoções muito intensas, que mudam rápido e me atrapalham nas decisões.",
-        sensivel: false,
-      },
-      {
-        texto: "Já fiz coisas para me machucar de propósito ou tive vontade de me machucar.",
-        sensivel: true,
-      }
+      { texto: "Tenho sentimento instável sobre quem eu sou ou sobre o que quero para minha vida.", sensivel: false },
+      { texto: "Meus relacionamentos são intensos — mudam de muito próximos para distantes ou complicados de repente.", sensivel: false },
+      { texto: "Sinto emoções muito intensas, que mudam rápido e me atrapalham nas decisões.", sensivel: false },
+      { texto: "Tenho muito medo de ser abandonada ou rejeitada pelas pessoas que amo.", sensivel: false },
+      { texto: "Sinto uma sensação de vazio por dentro com frequência.", sensivel: false },
+      { texto: "Já fiz coisas para me machucar de propósito ou tive vontade de me machucar.", sensivel: true }
     ]
   },
   {
     nome: "Alimentação e Imagem Corporal",
     descricao: "Pensamentos sobre corpo, alimentação e controle",
     perguntas: [
-      {
-        texto: "Me preocupo demais com meu corpo, peso ou aparência, mesmo quando dizem que está normal.",
-        sensivel: false,
-      },
-      {
-        texto: "Já tentei controlar o que como de forma extrema (ex: ficar longos períodos sem comer, dietas restritivas/ou compulsivas).",
-        sensivel: false,
-      },
-      {
-        texto: "Já comi mais do que precisava de uma vez só, mesmo não estando com fome, e depois me senti mal por isso.",
-        sensivel: false,
-      },
-      {
-        texto: "Costumo me sentir culpada, envergonhada ou com raiva do meu corpo.",
-        sensivel: false,
-      }
+      { texto: "Me preocupo demais com meu corpo, peso ou aparência, mesmo quando dizem que está normal.", sensivel: false },
+      { texto: "Já tentei controlar o que como de forma extrema (ex: ficar longos períodos sem comer, dietas restritivas ou compulsivas).", sensivel: false },
+      { texto: "Já comi mais do que precisava de uma vez só, mesmo não estando com fome, e depois me senti mal por isso.", sensivel: false },
+      { texto: "Costumo me sentir culpada, envergonhada ou com raiva do meu corpo.", sensivel: false }
     ]
   },
   {
     nome: "Comunicação e Sensibilidades Sociais",
     descricao: "Como você se comporta e se sente em situações sociais e sensoriais do dia a dia",
     perguntas: [
-      {
-        texto: "Me esforço muito para parecer que estou à vontade em situações sociais, mesmo quando não estou.",
-        sensivel: false,
-      },
-      {
-        texto: "Costumo observar as pessoas e imitar o jeito delas para me encaixar socialmente.",
-        sensivel: false,
-      },
-      {
-        texto: "Sinto que não entendo algumas regras sociais que parecem fáceis para os outros.",
-        sensivel: false,
-      },
-      {
-        texto: "Gosto de me aprofundar muito em poucos assuntos, mais do que a maioria das pessoas.",
-        sensivel: false,
-      }
+      { texto: "Me esforço muito para parecer que estou à vontade em situações sociais, mesmo quando não estou.", sensivel: false },
+      { texto: "Costumo observar as pessoas e imitar o jeito delas para me encaixar socialmente.", sensivel: false },
+      { texto: "Sinto que não entendo algumas regras sociais que parecem fáceis para os outros.", sensivel: false },
+      { texto: "Sons, luzes, texturas ou cheiros específicos me incomodam muito mais do que parecem incomodar as outras pessoas.", sensivel: false },
+      { texto: "Depois de socializar, mesmo em situações que gostei, sinto uma exaustão intensa e preciso de tempo sozinha pra me recuperar.", sensivel: false }
     ]
   }
 ];
